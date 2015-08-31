@@ -5,14 +5,13 @@
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/location_result_text_view"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_weight="2.89"
         android:scrollbars="vertical"
         android:maxLines="12"
-        android:textColor="#ffffffff"
-        android:text=" "/>
+        android:textColor="#FFF"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -30,37 +29,37 @@
                 android:orientation="vertical" >
 
                 <TextView
-                    android:id="@+id/textView2"
+                    android:id="@+id/location_mode_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text=" 定位模式"
+                    android:text="@string/location_mode"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
-		<RadioGroup
-		    android:id="@+id/selectMode"
-		    android:layout_width="wrap_content"
-		    android:layout_height="match_parent" >
-
-     		 <RadioButton
-     		     android:id="@+id/radio_hight"
-     		     android:layout_width="wrap_content"
-     		     android:layout_height="wrap_content"
-     		     android:checked="true"
-     		     android:text="高精度" />
-
-                <RadioButton
-                    android:id="@+id/radio_low"
+                <RadioGroup
+                    android:id="@+id/location_mode_radio_group"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="低功耗" />
+                    android:layout_height="match_parent" >
 
-                <RadioButton
-                    android:id="@+id/radio_device"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="仅设备" />
-</RadioGroup>
-              
+                     <RadioButton
+                         android:id="@+id/radio_high_accuracy"
+                         android:layout_width="wrap_content"
+                         android:layout_height="wrap_content"
+                         android:checked="true"
+                         android:text="@string/high_accuracy" />
+
+                    <RadioButton
+                        android:id="@+id/radio_battery_saving"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/battery_saving" />
+
+                    <RadioButton
+                        android:id="@+id/radio_device_sensors"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/device_sensors" />
+                </RadioGroup>
+
             </LinearLayout>
 
             <LinearLayout
@@ -70,45 +69,45 @@
                 android:orientation="vertical" >
 
                 <TextView
-                    android:id="@+id/TextView01"
+                    android:id="@+id/coor_type_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="坐标系"
+                    android:text="@string/coor_type"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
-	<RadioGroup
-		    android:id="@+id/selectCoordinates"
-		    android:layout_width="wrap_content"
-		    android:layout_height="match_parent" >
 
-                <RadioButton
-                    android:id="@+id/radio_gcj02"
+                <RadioGroup
+                    android:id="@+id/coor_type_radio_group"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:text="gcj02(国测局加密经纬度坐标)" />
+                    android:layout_height="match_parent" >
 
-                <RadioButton
-                    android:id="@+id/radio_bd09ll"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="bd09ll(百度加密经纬度坐标)" />
+                    <RadioButton
+                        android:id="@+id/radio_gcj02"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="@string/gcj02" />
 
-                <RadioButton
-                    android:id="@+id/radio_bd09"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="bd09(百度加密墨卡托坐标)" />
-</RadioGroup>
+                    <RadioButton
+                        android:id="@+id/radio_bd09ll"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/bd09ll" />
+
+                    <RadioButton
+                        android:id="@+id/radio_bd09"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/bd09" />
+                </RadioGroup>
             </LinearLayout>
 
         </LinearLayout>
 
         <TextView
-            android:id="@+id/modeinfor"
+            android:id="@+id/location_mode_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="2.88"
-            android:text=" " />
+            android:layout_weight="2.88"/>
 
         <LinearLayout
             android:layout_width="278dp"
@@ -116,14 +115,14 @@
             android:orientation="horizontal" >
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/scan_span_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="定位时间间隔(ms):"
+                android:text="@string/scan_span"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <EditText
-                android:id="@+id/frequence"
+                android:id="@+id/period"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
@@ -142,17 +141,16 @@
             android:orientation="horizontal" >
 
             <TextView
-                android:id="@+id/geofencelog"
+                android:id="@+id/reverse_geo_code_result_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="反地理编码"
+                android:text="@string/reverse_geo_code_result"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <CheckBox
-                android:id="@+id/geolocation"
+                android:id="@+id/is_reverse_geo_code_result"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=" " />
+                android:layout_height="wrap_content"/>
         </LinearLayout>
 
     </LinearLayout>
@@ -164,11 +162,12 @@
         android:gravity="center|top"
         android:orientation="vertical" >
 
-        <Button
-            android:id="@+id/addfence"
+        <Switch
+            android:id="@+id/location_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="开启定位" />
+            android:textOn="Start Location"
+            android:textOff="Stop Location"/>
 
     </LinearLayout>
 

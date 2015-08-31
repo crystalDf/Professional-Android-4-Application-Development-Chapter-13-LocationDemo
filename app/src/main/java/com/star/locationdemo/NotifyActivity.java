@@ -2,14 +2,13 @@ package com.star.locationdemo;
 
 
 import android.app.Activity;
-import android.app.Service;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
@@ -19,81 +18,85 @@ import com.baidu.location.LocationClient;
 
 public class NotifyActivity extends Activity{
 
-    private Button startNotify;
+    private Switch mNotifySwitch;
+
     private Vibrator mVibrator;
     private LocationClient mLocationClient;
-    private NotiftLocationListener listener;
-    private double longtitude,latitude;
-    private NotifyLister mNotifyLister;
+
+    private double mLatitude;
+    private double mLongitude;
+
+    private BDNotifyListener mBDNotifyListener;
+
+    private Handler notifyHandler = new Handler() {
+
+        @Override
+        public void handleMessage(Message msg) {
+
+            super.handleMessage(msg);
+
+            mBDNotifyListener = new BDNotifyListener() {
+                @Override
+                public void onNotify(BDLocation bdLocation, float v) {
+                    super.onNotify(bdLocation, v);
+
+                    mVibrator.vibrate(1000);//振动提醒已到设定位置附近
+                    Toast.makeText(NotifyActivity.this, "震动提醒", Toast.LENGTH_SHORT).show();
+                }
+            };
+
+            mBDNotifyListener.SetNotifyLocation(mLatitude, mLongitude, 3000, "gcj02");//4个参数代表要位置提醒的点的坐标，具体含义依次为：纬度，经度，距离范围，坐标系类型(gcj02,gps,bd09,bd09ll)
+
+            mLocationClient.registerNotify(mBDNotifyListener);
+        }
+
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.notify);
-        listener = new NotiftLocationListener();
-        mVibrator =(Vibrator)getApplicationContext().getSystemService(Service.VIBRATOR_SERVICE);
 
-        startNotify = (Button)findViewById(R.id.notifystart);
+        mVibrator = (Vibrator) getApplicationContext().getSystemService(VIBRATOR_SERVICE);
+
+        mNotifySwitch = (Switch) findViewById(R.id.notify_switch);
+
         mLocationClient  = new LocationClient(this);
-        mLocationClient.registerLocationListener(listener);
-        startNotify.setOnClickListener(new OnClickListener() {
-
+        mLocationClient.registerLocationListener(new BDLocationListener() {
             @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                if(startNotify.getText().toString().equals("开启位置提醒")){
-                    mLocationClient.start();
-                    startNotify.setText("关闭位置提醒");
-                }else{
-                    if(mNotifyLister!=null){
-                        mLocationClient.removeNotifyEvent(mNotifyLister);
-                        startNotify.setText("开启位置提醒");
-                    }
-
-                }
-
-
+            public void onReceiveLocation(BDLocation bdLocation) {
+                //Receive Location
+                mLongitude = bdLocation.getLongitude();
+                mLatitude = bdLocation.getLatitude();
+                notifyHandler.sendEmptyMessage(0);
             }
         });
+
+        mNotifySwitch.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mNotifySwitch.isChecked()) {
+                    mLocationClient.start();
+                } else if (mBDNotifyListener != null) {
+                    mLocationClient.removeNotifyEvent(mBDNotifyListener);
+                    mLocationClient.stop();
+                }
+            }
+        });
+
     }
 
     @Override
     protected void onStop() {
-        // TODO Auto-generated method stub
+
         super.onStop();
-        mLocationClient.removeNotifyEvent(mNotifyLister);
+        mLocationClient.removeNotifyEvent(mBDNotifyListener);
         mLocationClient = null;
-        mNotifyLister= null;
-        listener = null;
+        mBDNotifyListener = null;
+        mNotifySwitch.setChecked(false);
 
     }
 
-    private Handler notifyHandler = new Handler(){
 
-        @Override
-        public void handleMessage(Message msg) {
-            // TODO Auto-generated method stub
-            super.handleMessage(msg);
-            mNotifyLister = new NotifyLister();
-            mNotifyLister.SetNotifyLocation(latitude,longtitude, 3000,"gcj02");//4个参数代表要位置提醒的点的坐标，具体含义依次为：纬度，经度，距离范围，坐标系类型(gcj02,gps,bd09,bd09ll)
-            mLocationClient.registerNotify(mNotifyLister);
-        }
-
-    };
-    public class NotiftLocationListener implements BDLocationListener {
-
-        @Override
-        public void onReceiveLocation(BDLocation location) {
-            //Receive Location
-            longtitude = location.getLongitude();
-            latitude = location.getLatitude();
-            notifyHandler.sendEmptyMessage(0);
-        }
-    }
-    public class NotifyLister extends BDNotifyListener{
-        public void onNotify(BDLocation mlocation, float distance){
-            mVibrator.vibrate(1000);//振动提醒已到设定位置附近
-            Toast.makeText(NotifyActivity.this, "震动提醒", Toast.LENGTH_SHORT).show();
-        }
-    }
 }

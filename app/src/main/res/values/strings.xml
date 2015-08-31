@@ -25,4 +25,14 @@
 		501～700：key验证失败\n</string>
     <string name="qa_callback">问题反馈方法</string>
     <string name="qa_callback_mail">mapapi@baidu.com</string>
+    <string name="location_mode">定位模式</string>
+    <string name="high_accuracy">高精度</string>
+    <string name="battery_saving">低功耗</string>
+    <string name="device_sensors">仅设备</string>
+    <string name="coor_type">坐标系</string>
+    <string name="gcj02">gcj02(国测局加密经纬度坐标)</string>
+    <string name="bd09ll">bd09ll(百度加密经纬度坐标)</string>
+    <string name="bd09">bd09(百度加密墨卡托坐标)</string>
+    <string name="scan_span">定位时间间隔(ms):</string>
+    <string name="reverse_geo_code_result">反地理编码</string>
 </resources>

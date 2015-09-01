@@ -18,39 +18,20 @@ import com.baidu.location.LocationClient;
 
 public class NotifyActivity extends Activity{
 
+    private LocationClient mLocationClient;
+
+    private BDLocationListener mBDLocationListener;
+
     private Switch mNotifySwitch;
 
     private Vibrator mVibrator;
-    private LocationClient mLocationClient;
 
     private double mLatitude;
     private double mLongitude;
 
     private BDNotifyListener mBDNotifyListener;
 
-    private Handler notifyHandler = new Handler() {
-
-        @Override
-        public void handleMessage(Message msg) {
-
-            super.handleMessage(msg);
-
-            mBDNotifyListener = new BDNotifyListener() {
-                @Override
-                public void onNotify(BDLocation bdLocation, float v) {
-                    super.onNotify(bdLocation, v);
-
-                    mVibrator.vibrate(1000);//振动提醒已到设定位置附近
-                    Toast.makeText(NotifyActivity.this, "震动提醒", Toast.LENGTH_SHORT).show();
-                }
-            };
-
-            mBDNotifyListener.SetNotifyLocation(mLatitude, mLongitude, 3000, "gcj02");//4个参数代表要位置提醒的点的坐标，具体含义依次为：纬度，经度，距离范围，坐标系类型(gcj02,gps,bd09,bd09ll)
-
-            mLocationClient.registerNotify(mBDNotifyListener);
-        }
-
-    };
+    private Handler mBDNotifyHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,28 +39,55 @@ public class NotifyActivity extends Activity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.notify);
 
-        mVibrator = (Vibrator) getApplicationContext().getSystemService(VIBRATOR_SERVICE);
+        mLocationClient = new LocationClient(LocationApplication.getContext());
 
-        mNotifySwitch = (Switch) findViewById(R.id.notify_switch);
-
-        mLocationClient  = new LocationClient(this);
-        mLocationClient.registerLocationListener(new BDLocationListener() {
+        mBDLocationListener = new BDLocationListener() {
             @Override
             public void onReceiveLocation(BDLocation bdLocation) {
                 //Receive Location
                 mLongitude = bdLocation.getLongitude();
                 mLatitude = bdLocation.getLatitude();
-                notifyHandler.sendEmptyMessage(0);
+                mBDNotifyHandler.sendEmptyMessage(0);
             }
-        });
+        };
+
+        mBDNotifyListener = new BDNotifyListener() {
+            @Override
+            public void onNotify(BDLocation bdLocation, float v) {
+                super.onNotify(bdLocation, v);
+
+                mVibrator.vibrate(1000);//振动提醒已到设定位置附近
+                Toast.makeText(NotifyActivity.this, "震动提醒", Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        mBDNotifyHandler = new Handler() {
+
+            @Override
+            public void handleMessage(Message msg) {
+
+                super.handleMessage(msg);
+
+                mBDNotifyListener.SetNotifyLocation(mLatitude, mLongitude, 3000, "gcj02");//4个参数代表要位置提醒的点的坐标，具体含义依次为：纬度，经度，距离范围，坐标系类型(gcj02,gps,bd09,bd09ll)
+
+            }
+
+        };
+
+        mVibrator = (Vibrator) getApplicationContext().getSystemService(VIBRATOR_SERVICE);
+
+        mNotifySwitch = (Switch) findViewById(R.id.notify_switch);
 
         mNotifySwitch.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mNotifySwitch.isChecked()) {
                     mLocationClient.start();
+                    mLocationClient.registerLocationListener(mBDLocationListener);
+                    mLocationClient.registerNotify(mBDNotifyListener);
                 } else if (mBDNotifyListener != null) {
                     mLocationClient.removeNotifyEvent(mBDNotifyListener);
+                    mLocationClient.unRegisterLocationListener(mBDLocationListener);
                     mLocationClient.stop();
                 }
             }
@@ -89,14 +97,11 @@ public class NotifyActivity extends Activity{
 
     @Override
     protected void onStop() {
-
         super.onStop();
+
         mLocationClient.removeNotifyEvent(mBDNotifyListener);
-        mLocationClient = null;
-        mBDNotifyListener = null;
+        mLocationClient.unRegisterLocationListener(mBDLocationListener);
+        mLocationClient.stop();
         mNotifySwitch.setChecked(false);
-
     }
-
-
 }
